@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerMovementBase : MonoBehaviour {
+public class PlayerBase : MonoBehaviour {
 
 
-    #region Movement
+    #region Properties
 
     [Header("Movement Setting")]
     /* Movement Speed Of Player */
@@ -32,6 +32,7 @@ public class PlayerMovementBase : MonoBehaviour {
 	void Update () {
 
 
+
         #region PlayerMovement
         Vector3 NewMovement = new Vector3();
 
@@ -39,8 +40,16 @@ public class PlayerMovementBase : MonoBehaviour {
         NewMovement.x = Input.GetAxis("Horizontal");
         NewMovement.z = Input.GetAxis("Vertical");
 
-        //Move the Player
-        Controller.MovePosition(transform.position + NewMovement * moveSpeed * Time.deltaTime);
+        //Check if New Movement is not Zero Vector
+        if(NewMovement != Vector3.zero)
+        {
+            //Set Player Direction forward
+            transform.forward = Vector3.Normalize(NewMovement);
+
+            //Move the Player
+            Controller.MovePosition(transform.position + NewMovement * moveSpeed * Time.deltaTime);
+        }
+       
         #endregion
 
 
@@ -53,5 +62,14 @@ public class PlayerMovementBase : MonoBehaviour {
         //Slerp the Camera Vector From Current Position to the New Camera Position
         Camera.main.transform.position = Vector3.Slerp(Camera.main.transform.position, NewCameraPos, Time.deltaTime * CameraLag);
         #endregion
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Pickable" &&
+            other.GetComponent<PickableBase>())
+        {
+            ((PickableBase)other.gameObject.GetComponent<PickableBase>()).Pickup(this.gameObject);
+        }
     }
 }
