@@ -4,13 +4,14 @@ using System.Collections;
 public class Fruit : PickableBase
 {
 
-
+    #region Properties
     [Header("Setting")]
     [SerializeField]
-    //The amount of Score Added by This Fruit
+    /* The amount of Score Added by This Fruit */
     private int Score = 0;
 
     public GameManager Manager;
+    #endregion
 
     // Use this for initialization
     void Start()
@@ -24,6 +25,7 @@ public class Fruit : PickableBase
 
     }
 
+    #region Overridable
     public override bool Pickup(GameObject Instigator)
     {
         if (Instigator != null &&
@@ -38,4 +40,5 @@ public class Fruit : PickableBase
 
         return false;
     }
+    #endregion
 }
