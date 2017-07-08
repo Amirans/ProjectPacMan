@@ -31,8 +31,6 @@ public class PlayerBase : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-
-
         #region PlayerMovement
         Vector3 NewMovement = new Vector3();
 
@@ -66,10 +64,20 @@ public class PlayerBase : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if(other.tag == "Pickable" &&
-            other.GetComponent<PickableBase>())
+        //if(other.tag == "Pickable" &&
+            //other.GetComponent<PickableBase>())
+        //{
+            //((PickableBase)other.gameObject.GetComponent<PickableBase>()).Pickup(this.gameObject);
+        //}else
+        if(other.CompareTag("Fruit"))
         {
-            ((PickableBase)other.gameObject.GetComponent<PickableBase>()).Pickup(this.gameObject);
+            //Fruit Collected
+            if(GameManager.instance != null)
+                GameManager.instance.OnFruitCollected();
+
+            //Destroy Fruit
+            Destroy(other.gameObject);
         }
+            
     }
 }

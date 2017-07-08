@@ -4,7 +4,7 @@ using System.Collections;
 public class EnemyAIBase : MonoBehaviour
 {
 
-    public enum AIState
+    public enum EAIState
     {
         Idle,
         Patrolling,
@@ -23,7 +23,7 @@ public class EnemyAIBase : MonoBehaviour
     protected NavMeshAgent Agent;
 
     /* State of the AI Agent */
-    public AIState AgentState = AIState.Idle;
+    public EAIState AgentState = EAIState.Idle;
 
     /* Whether Player is In Sight */
     public bool PlayerInSight = false;
@@ -72,7 +72,7 @@ public class EnemyAIBase : MonoBehaviour
     {
 
         //Check for Sight If we are not already Chasing the Player and Player is in range
-        if(AgentState != AIState.Chasing && PlayerInRange)
+        if(AgentState != EAIState.Chasing && PlayerInRange)
         {
             if(IsPlayerInSight())
             {
@@ -81,7 +81,7 @@ public class EnemyAIBase : MonoBehaviour
         }
 
         //Handle Chasing. Move to the Target
-        if(AgentState == AIState.Chasing)
+        if(AgentState == EAIState.Chasing)
         {
             if (TargetTransform)
             {
@@ -95,7 +95,7 @@ public class EnemyAIBase : MonoBehaviour
         {
             if(IsDestinationReached())
             {
-                AgentState = AIState.Idle;
+                AgentState = EAIState.Idle;
                 Eye.color = Color.green;
             }
         }
@@ -107,7 +107,7 @@ public class EnemyAIBase : MonoBehaviour
     private bool IsPlayerInSight()
     {
         if(TargetTransform != null &&
-            AgentState != AIState.Chasing)
+            AgentState != EAIState.Chasing)
         {
             //Get the Direction of the Player to the Enemy 
             Vector3 direction = TargetTransform.position - transform.position;
@@ -135,7 +135,7 @@ public class EnemyAIBase : MonoBehaviour
     private void StartChase()
     {
         //Set State to Chasing
-        AgentState = AIState.Chasing;
+        AgentState = EAIState.Chasing;
 
         Eye.color = Color.red;
         
@@ -147,7 +147,7 @@ public class EnemyAIBase : MonoBehaviour
         Eye.color = Color.yellow;
 
         //Set Agent State to Suspicious
-        AgentState = AIState.Suspicious;
+        AgentState = EAIState.Suspicious;
 
         //Move to the Last Known Position
         Agent.SetDestination(LastPlayerPos);
@@ -181,7 +181,7 @@ public class EnemyAIBase : MonoBehaviour
             TargetTransform = null;
 
             //Stop the Chase if we are chasing
-            if(AgentState == AIState.Chasing)
+            if(AgentState == EAIState.Chasing)
                 StopChase();
         }
     }
