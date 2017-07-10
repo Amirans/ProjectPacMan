@@ -43,6 +43,8 @@ public class EnemyAIBase : MonoBehaviour,IDamagable<float,GameObject>
     /* Area of Sight*/
     SphereCollider AreaOfSight;
 
+    /*Animator Reference */
+    private Animator AnimController;
 
     //Light Eye;
     /* Last Known Position of the Player */
@@ -61,14 +63,26 @@ public class EnemyAIBase : MonoBehaviour,IDamagable<float,GameObject>
         }
         #endregion
 
+        //Get Area of Sight Sphere
         AreaOfSight = GetComponent<SphereCollider>();
+
+        //Get Animator from Child
+        AnimController = transform.GetChild(0).GetComponent<Animator>();
     }
 
     // Use this for initialization
     void Start()
     {
         LastPlayerPos = Vector3.zero;
+
+
+        //Set Animation to Walk
+        AnimController.SetInteger("moving", 0);
+
         StartPartrol();
+
+        //Set Animation to Walk
+        //AnimController.SetInteger("moving", 0);
     }
 
     #region AI Logic 
@@ -115,8 +129,9 @@ public class EnemyAIBase : MonoBehaviour,IDamagable<float,GameObject>
             if(IsDestinationReached())
             {
                 AgentState = EAIState.Idle;
-                //Eye.color = Color.green;
                 StartPartrol();
+                //Set Animation to Walk
+                AnimController.SetInteger("moving", 1);
             }
         }
        
@@ -129,8 +144,11 @@ public class EnemyAIBase : MonoBehaviour,IDamagable<float,GameObject>
         TargetTransform = null;
         LastPlayerPos = transform.position;
 
+
         AgentState = EAIState.Idle;
         StartPartrol();
+
+       
 
     }
 
@@ -140,14 +158,17 @@ public class EnemyAIBase : MonoBehaviour,IDamagable<float,GameObject>
         //Set State to Chasing
         AgentState = EAIState.Chasing;
 
-        //Eye.color = Color.red;
-        
+        //Set Animation to Run
+        AnimController.SetInteger("moving", 2);
+
+
     }
 
     //Stops the Chase by Setting the Agent State to Suspicious and Moves to the Last Known Position
     private void StopChase()
     {
-        //Eye.color = Color.yellow;
+        //Set Animation to Walk
+        AnimController.SetInteger("moving", 1);
 
         //Set Agent State to Suspicious
         AgentState = EAIState.Suspicious;
@@ -164,6 +185,10 @@ public class EnemyAIBase : MonoBehaviour,IDamagable<float,GameObject>
         {
             Agent.SetDestination(NewDestination);
             AgentState = EAIState.Patrolling;
+
+            //Set Animation to Walk
+            AnimController.SetInteger("moving", 1);
+
         }
     }
 

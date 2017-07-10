@@ -72,6 +72,7 @@ public class GameManager : MonoBehaviour {
     // Use this for initialization
     void Start () {
         MaxNumFruits = 2;
+        NumFruitsCollected = 0;
         GameState = EGameState.Menu;
 
         //Load Setting
