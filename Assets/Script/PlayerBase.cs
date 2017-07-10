@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerBase : MonoBehaviour {
+public class PlayerBase : MonoBehaviour, IDamagable<float,GameObject> {
 
 
     #region Properties
@@ -47,7 +47,7 @@ public class PlayerBase : MonoBehaviour {
             //Move the Player
             Controller.MovePosition(transform.position + NewMovement * moveSpeed * Time.deltaTime);
         }
-       
+
         #endregion
 
 
@@ -55,7 +55,7 @@ public class PlayerBase : MonoBehaviour {
         //Camera Movement with Lag
 
         //Calculate the New Camera Position, Respecting the Distance and centering the Player Z Axis
-        Vector3 NewCameraPos = new Vector3(transform.position.x, transform.position.y + CameraDistance, transform.position.z - 5.0f);
+        Vector3 NewCameraPos = new Vector3(transform.position.x, transform.position.y + CameraDistance, transform.position.z - CameraDistance / 2);
 
         //Slerp the Camera Vector From Current Position to the New Camera Position
         Camera.main.transform.position = Vector3.Slerp(Camera.main.transform.position, NewCameraPos, Time.deltaTime * CameraLag);
@@ -64,20 +64,39 @@ public class PlayerBase : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        //if(other.tag == "Pickable" &&
-            //other.GetComponent<PickableBase>())
-        //{
-            //((PickableBase)other.gameObject.GetComponent<PickableBase>()).Pickup(this.gameObject);
-        //}else
+        
         if(other.CompareTag("Fruit"))
         {
             //Fruit Collected
-            if(GameManager.instance != null)
+            if(GameManager.instance != null &&
+                GameManager.instance.GameState == GameManager.EGameState.InProgress)
                 GameManager.instance.OnFruitCollected();
 
             //Destroy Fruit
-            Destroy(other.gameObject);
+            other.gameObject.SetActive(false);
         }
             
     }
+
+    #region Damage Handling
+    //Damage Interface
+    public void Damage(float DamageValue,GameObject Instigator)
+    {
+        if(Instigator != null &&
+            GameManager.instance.GameState == GameManager.EGameState.InProgress)
+        {
+            OnDeath();
+        }
+    }
+
+    //Called When Player Dies
+    private void OnDeath()
+    {
+        //Inform Manager
+        GameManager.instance.OnPlayerDeath();
+
+        //Deactivate Player
+        gameObject.SetActive(false);
+    }
+    #endregion
 }
